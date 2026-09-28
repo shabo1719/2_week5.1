@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title></title>
+
+    <style>
+
+        body {
+            margin: 0;
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+        #editor > * {
+		    margin-top: 0;
+		    margin-bottom: 20px;
+		}
+
+		#title {
+		    display: flex;
+		    align-items: center;
+		    gap: 10px;
+		}
+
+
+       
+
+        #canvas {
+            width: 70%;
+            height: 100%;
+
+            background: #222222;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+
+        
+        #lines {
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 100%;
+
+            pointer-events: none;
+        }
+
+        #lines line {
+            stroke: white;
+            stroke-width: 2;
+        }
+
+
+
+        .star {
+            position: absolute;
+
+            width: 70px;
+            height: 70px;
+
+            background: #ffff00;
+
+            clip-path: polygon(
+                50% 0%,
+                61% 35%,
+                98% 35%,
+                68% 57%,
+                79% 91%,
+                50% 70%,
+                21% 91%,
+                32% 57%,
+                2% 35%,
+                39% 35%
+            );
+
+            
+        }
+
+
+    
+
+        
+
+        
+
+        #editor {
+            width: 30%;
+            height: 100%;
+
+            padding: 30px;
+
+            box-sizing: border-box;
+        }
+
+
+       
+
+        #starMenu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+
+        #starList {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+
+        
+
+        .editorStar {
+            width: 50px;
+            height: 50px;
+
+            background: white;
+
+            clip-path: polygon(
+                50% 0%,
+                61% 35%,
+                98% 35%,
+                68% 57%,
+                79% 91%,
+                50% 70%,
+                21% 91%,
+                32% 57%,
+                2% 35%,
+                39% 35%
+            );
+
+            cursor: pointer;
+        }
+
+
+        #position {
+		    display: flex;
+		    gap: 20px;
+		}
+
+		#position > div {
+		    flex: 1;
+		}
+
+		#back {
+		    position: absolute;
+		    left: 20px;
+		    top: 20px;
+		    z-index: 10;
+		}
+
+
+       
+
+        
+
+
+        
+
+        
+
+
+        
+
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+
+        
+
+       
+
+    </style>
+</head>
+
+
+<body>
+
+
+   
+
+    <div id="canvas">
+
+    <button id="back">BACK</button>
+
+    <svg id="lines"></svg>
+
+</div>
+
+
+
+    
+
+    <div id="editor">
+
+
+        <div id="title">
+
+		    <h2>나만의 별자리 만들기</h2>
+
+		    <button id="addStar">+</button>
+
+		</div>
+
+		<div id="starMenu">
+
+		    <div id="starList"></div>
+
+		</div>
+
+
+
+      
+
+        <p>별 크기</p>
+
+        <input
+            type="range"
+            id="size"
+            min="20"
+            max="200"
+            value="70"
+        >
+
+
+
+        
+
+       <div id="position">
+
+    <div>
+        <p>X축</p>
+
+        <input
+            type="range"
+            id="x"
+            min="0"
+            max="900"
+            value="300"
+        >
+    </div>
+
+    <div>
+        <p>Y축</p>
+
+        <input
+            type="range"
+            id="y"
+            min="0"
+            max="700"
+            value="300"
+        >
+    </div>
+
+</div>
+
+
+
+       <div id="colorArea">
+
+    <div>
+        <p>별 색상</p>
+
+        <input
+            type="color"
+            id="starColor"
+            value="#ffff00"
+        >
+        <p>캔버스 색상</p>
+
+        <input
+            type="color"
+            id="canvasColor"
+            value="#222222"
+        >
+  
+    </div>
+
+</div>
+
+
+
+        
+
+        <p></p>
+        <input
+            type="text"
+            id="constellationName"
+            placeholder="별자리 이름"
+        >
+
+
+
+        
+
+        <div id="buttonArea">
+
+            <button id="connect">
+                별자리 잇기
+            </button>
+
+            <button id="save" disabled>
+                별자리 저장하기
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+
+<script>
+
+
+    
+
+    let stars = [];
+
+
+  
+    let selectedStar = null;
+
+
+   
+
+
+
+
+  
+    function createStar() {
+
+
+    
+
+        let star = document.createElement("div");
+
+        star.className = "star";
+
+
+        let randomX =
+		    Math.random() * (canvas.clientWidth - 70);
+
+		let randomY =
+		    Math.random() * (canvas.clientHeight - 70);
+
+
+		star.style.left =
+		    randomX + "px";
+
+		star.style.top =
+		    randomY + "px";
+
+
+        star.style.width = "70px";
+
+        star.style.height = "70px";
+
+
+        star.style.background = "#ffff00";
+
+
+
+        
+
+        let editorStar =
+            document.createElement("div");
+
+        editorStar.className =
+            "editorStar";
+
+
+        editorStar.style.background =
+            "#ffff00";
+
+
+        starList.appendChild(
+            editorStar
+        );
+
+
+
+       
+
+        let starData = {
+
+            element: star,
+
+            editorElement: editorStar,
+
+            x: randomX,
+			y: randomY,
+
+            size: 70,
+
+            color: "#ffff00",
+
+           
+
+        };
+
+
+
+        
+
+        stars.push(starData);
+
+
+
+  
+
+        canvas.appendChild(star);
+
+
+
+        
+
+        editorStar.onclick = function() {
+
+            selectStar(starData);
+
+        };
+
+
+
+        
+        selectStar(starData);
+
+    }
+
+
+
+   
+
+    function selectStar(starData) {
+
+
+
+        selectedStar = starData;
+
+        size.value =
+            selectedStar.size;
+
+
+        x.value =
+            selectedStar.x;
+
+
+        y.value =
+            selectedStar.y;
+
+
+        starColor.value =
+            selectedStar.color;
+
+    }
+
+
+
+   
+
+    canvas.onclick = function(event) {
+
+
+        if (
+            event.target.classList.contains("star")
+        ) {
+
+
+            for (
+                let i = 0;
+                i < stars.length;
+                i++
+            ) {
+
+
+                if (
+                    stars[i].element ==
+                    event.target
+                ) {
+
+                    selectStar(stars[i]);
+
+                }
+
+            }
+
+        }
+
+    };
+
+
+
+    
+
+    size.oninput = function() {
+
+
+        if (selectedStar == null) {
+
+            return;
+
+        }
+
+
+
+        selectedStar.size =
+            Number(size.value);
+
+
+
+        selectedStar.element.style.width =
+            selectedStar.size + "px";
+
+
+        selectedStar.element.style.height =
+            selectedStar.size + "px";
+
+
+
+       
+
+
+    };
+
+
+
+    
+
+    x.oninput = function() {
+
+
+        if (selectedStar == null) {
+
+            return;
+
+        }
+
+
+
+        selectedStar.x =
+            Number(x.value);
+
+
+
+        selectedStar.element.style.left =
+            selectedStar.x + "px";
+
+    };
+
+
+
+
+    y.oninput = function() {
+
+
+        if (selectedStar == null) {
+
+            return;
+
+        }
+
+
+
+        selectedStar.y =
+            Number(y.value);
+
+
+
+        selectedStar.element.style.top =
+            selectedStar.y + "px";
+
+    };
+
+
+
+   
+
+    starColor.oninput = function() {
+
+
+        if (selectedStar == null) {
+
+            return;
+
+        }
+
+
+
+        selectedStar.color =
+            starColor.value;
+
+
+
+       
+
+        selectedStar.element.style.background =
+            selectedStar.color;
+
+
+
+      
+
+        selectedStar.editorElement.style.background =
+            selectedStar.color;
+
+    };
+
+    canvasColor.oninput = function() {
+
+    canvas.style.background =
+        canvasColor.value;
+
+};
+
+
+
+    
+
+
+
+
+
+   
+
+
+
+
+    addStar.onclick = function() {
+
+        createStar();
+
+    };
+
+
+
+    
+
+    connect.onclick = function() {
+
+
+        
+
+        if (stars.length < 2) {
+
+            return;
+
+        }
+
+            
+
+
+
+    
+
+        lines.innerHTML = "";
+
+
+
+     
+
+        let randomStars =
+            [...stars];
+
+
+
+     
+
+        randomStars.sort(
+            function() {
+
+                return Math.random() - 0.5;
+
+            }
+        );
+
+
+
+
+
+     
+        for (
+            let i = 0;
+            i < randomStars.length - 1;
+            i++
+        ) {
+
+
+            let star1 =
+                randomStars[i];
+
+
+            let star2 =
+                randomStars[i + 1];
+
+
+
+            
+
+            let line =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "line"
+                );
+
+
+
+           
+
+            let x1 =
+                Number(star1.x) +
+                Number(star1.size) / 2;
+
+
+            let y1 =
+                Number(star1.y) +
+                Number(star1.size) / 2;
+
+
+
+         
+            let x2 =
+                Number(star2.x) +
+                Number(star2.size) / 2;
+
+
+            let y2 =
+                Number(star2.y) +
+                Number(star2.size) / 2;
+
+
+
+            
+
+            line.setAttribute(
+                "x1",
+                x1
+            );
+
+            line.setAttribute(
+                "y1",
+                y1
+            );
+
+            line.setAttribute(
+                "x2",
+                x2
+            );
+
+            line.setAttribute(
+                "y2",
+                y2
+            );
+
+
+
+          
+            lines.appendChild(
+                line
+            );
+
+        }
+      
+
+
+
+    save.disabled = false;
+
+		    };
+	save.onclick = function() {
+
+		    location.href = "index.html";
+
+		};
+
+	back.onclick = function() {
+
+    location.href = "index.html";
+
+};
+
+
+    createStar();
+
+
+</script>
+
+</body>
+</html>

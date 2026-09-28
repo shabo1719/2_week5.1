@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>별자리 메이커</title>
+
+    <style>
+        @font-face {
+            font-family: 'STARGAZE-Square';
+            src: url('STARGAZE-Square.otf') format('opentype');
+            font-weight: 700;
+        }
+
+        body {
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+
+        .nightsky {
+            background: url(nightsky.jpg);
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'STARGAZE-Square';
+            font-size: 45px;
+            font-weight: 700;
+            color: white;
+            -webkit-text-stroke: 1px white;
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        .sparkle, .sparkle2, .sparkle3{
+            width: 100px;
+            position: absolute;
+        }
+
+         .sparkle {
+            left: 8%;
+            top: 8%;
+        }
+
+        .sparkle2 {
+            left: 60%;
+            top: 45%;
+        }
+
+        .sparkle3 {
+            left: 80%;
+            top: 15%;
+        }
+
+
+
+
+    </style>
+</head>
+
+<body>
+
+    <div class="nightsky">
+        <a href="constellation.html">
+            <img src="sparkle.gif" class="sparkle">
+        </a>
+        <a href="constellation.html">
+            <img src="sparkle2.gif" class="sparkle2">
+        </a>
+        <a href="constellation.html">
+            <img src="sparkle3.gif" class="sparkle3">
+        </a>
+        
+        <h1>Discover New Constellations</h1>
+    </div>
+
+
+
+</body>
+</html>
